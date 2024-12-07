@@ -60,12 +60,47 @@ const FilterPage = () => {
     }
   },[rating])
 
-  const filterValues=[categoryValue,priceValue,ratingValue]
+  let filterValues=[]
+
+  let categoryArrays=products.filter((item)=>item?.category.toLowerCase().includes(categoryValue.toLowerCase()))
+
+  let priceArrays=products.filter((item)=>{
+    let num=Math.round(Number(item.price))
+    if(priceValue == "upto $50" && num <= 50  )
+    {
+      return true
+    }
+    else if(priceValue == "$50 to $100" && num>50 && num<=100  )
+      {
+        return true
+      }
+    else if(priceValue == "Above $100" && num>100){
+      return true
+    }
+    return false
+  })
+  let ratingArrays=products.filter((item)=>{
+    let num=Number(item.rating.rate)
+  
+    if(ratingValue == "below 3" && num <= 3  )
+    {
+      return true
+    }
+    else if(ratingValue == "3 to 4" && num>3 && num<=4  )
+      {
+        return true
+      }
+    else if(ratingValue == "4 to 5" && num>=5){
+      return true
+    }
+    return false
+  })
 
   const saveFunction=()=>{
-   
-    dispatch(filterData(filterValues));
+    Array.prototype.push.apply(categoryArrays,priceArrays,ratingArrays);
+    dispatch(filterData(categoryArrays));
     navigation.navigate("Home");
+
   }
   
 
@@ -86,6 +121,7 @@ const FilterPage = () => {
           size={35}
           color="black"
           style={{ marginRight: 15, marginTop: 20 }}
+          onPress={()=> navigation.navigate("Home")}
         />
       </View>
       <View>
@@ -125,6 +161,7 @@ const FilterPage = () => {
               borderRadius: 10,
               borderWidth: 0.5,
             }}
+            onPress={()=> navigation.navigate("Home")}
           >
             <Text style={{ fontSize: 30, textAlign: "center" }}>Cancel</Text>
           </Pressable>

@@ -39,7 +39,7 @@ const HomeScreen = () => {
   const {value}=useSelector((state)=>state.desc)
   const [ searchValue,setSearchValue]=useState("");
   const [dataList,setDataList]=useState(data);
-  let filteredData=[]
+  const [filterResults, setFilterResults] = useState(list);
 
   useEffect(() => {
     dispatch(fetchProducts());
@@ -62,8 +62,14 @@ const HomeScreen = () => {
   const searchFunction=()=>{
      filteredData=data.filter((item)=>item?.title.toLowerCase().includes(searchValue.toLowerCase()))
      setDataList(filteredData)
+     console.log(list)
   }
-
+ 
+  useEffect(()=>{
+    if(list.length!=0){
+       setDataList(filterResults)
+    }
+  },[loader,list,filterResults])
 
   return (
     <View>

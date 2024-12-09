@@ -32,7 +32,7 @@ const AuthScreen = ({email,setEmail,password,setPassword,confirmPassword,setConf
         <Text style={styles.login}>Sign Up</Text>
         <TextInput
           value={email}
-          placeholder="please enter email ..."
+          placeholder="Enter UserName or email ..."
           style={styles.email}
           onChangeText={setEmail}
         />
@@ -42,6 +42,7 @@ const AuthScreen = ({email,setEmail,password,setPassword,confirmPassword,setConf
           style={styles.password}
           secureTextEntry={true}
           onChangeText={setPassword}
+          
         />
 
        {passwordMatch &&   <View style={{marginBottom:-10}}><Text style={{color:Colors?.primary}}>Password does not match</Text></View>}
@@ -78,6 +79,16 @@ const SignUpScreen = () => {
   const navigation=useNavigation();
   const auth=getAuth(app);
   const userDetails={password:password,confirmPassword:confirmPassword}
+  const includeGmail=()=>{
+    if (email.includes("@gmail")){
+      return email
+       
+    }
+       else{
+       let updatedValue=email.concat("@gmail.com")
+       return updatedValue
+       }  
+  }
 
   useEffect(()=>{
     const unsubscribe=onAuthStateChanged(auth,(user)=>{
@@ -93,7 +104,7 @@ const SignUpScreen = () => {
            return setPasswordMatch(true)
         }
         else{
-          await createUserWithEmailAndPassword(auth,email,password);
+          await createUserWithEmailAndPassword(auth,includeGmail(),password);
           console.log("user created successfully");
           navigation.navigate("Login")
         }
@@ -147,6 +158,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderRadius: 5,
     borderColor: Colors?.primary,
+    color:"black"
   },
   password: {
     width: 200,
@@ -156,6 +168,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 5,
     borderColor: Colors?.primary,
+    color:"black"
   },
   button: {
     backgroundColor: Colors?.primary,

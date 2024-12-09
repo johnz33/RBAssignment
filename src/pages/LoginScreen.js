@@ -31,7 +31,7 @@ const app=initializeApp(firebaseConfig);
 
 export {app};
 
-const AuthScreen = ({email,setEmail,password,setPassword,isLogin,setIsLogin,handleAuthentication}) => {
+const AuthScreen = ({email,setEmail,password,setPassword,isLogin,setIsLogin,handleAuthentication,inValid}) => {
 
   const navigation=useNavigation();
 
@@ -44,7 +44,7 @@ const AuthScreen = ({email,setEmail,password,setPassword,isLogin,setIsLogin,hand
         <Text style={styles.login}>{isLogin?"Log In":"Sign Up"}</Text>
         <TextInput
           value={email}
-          placeholder="please enter email ..."
+          placeholder="Enter UserName or email ..."
           style={styles.email}
           onChangeText={setEmail}
         />
@@ -55,6 +55,7 @@ const AuthScreen = ({email,setEmail,password,setPassword,isLogin,setIsLogin,hand
           secureTextEntry={true}
           onChangeText={setPassword}
         />
+        {inValid && <Text style={{color:Colors.primary}}>Invalid Credentials</Text>}       
         <Pressable style={styles.button} onPress={handleAuthentication}>
           <Text style={{ color: "white" }}>Log In </Text>
         </Pressable>
@@ -77,6 +78,18 @@ const LoginScreen = () => {
   const [isLogin,setIsLogin]=useState(true)
   const navigation=useNavigation();
   const auth=getAuth(app);
+  const [inValid,setInValid]=useState(false)
+  
+  const includeGmail=()=>{
+    if (email.includes("@gmail")){
+      return email
+       
+    }
+       else{
+       let updatedValue=email.concat("@gmail.com")
+       return updatedValue
+       }  
+  }
 
   useEffect(()=>{
     const unsubscribe=onAuthStateChanged(auth,(user)=>{
@@ -90,12 +103,13 @@ const LoginScreen = () => {
     try{
         if(isLogin){
           //Sign In
-          await signInWithEmailAndPassword(auth,email,password);
+          await signInWithEmailAndPassword(auth,includeGmail(),password);
           console.log("user signed in successfully");
           navigation.navigate("Home")
       }
     } catch(error){
       console.log("Authentication Error",error.message)
+      setInValid(true)
     }
   }
   return (
@@ -107,7 +121,8 @@ const LoginScreen = () => {
       setPassword={setPassword}
       isLogin={isLogin}
       setIsLogin={setIsLogin}
-      handleAuthentication={handleAuthentication}/>
+      handleAuthentication={handleAuthentication}
+      inValid={inValid}/>
     </ScrollView>
   );
 };
@@ -140,6 +155,8 @@ const styles = StyleSheet.create({
     marginTop: 30,
     borderRadius: 5,
     borderColor: Colors?.primary,
+    color:"black"
+  
   },
   password: {
     width: 200,

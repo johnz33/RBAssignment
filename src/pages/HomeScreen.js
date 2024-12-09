@@ -227,6 +227,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1.5,
     borderColor: "grey",
+    color:"black"
   },
   homescreensearch: {
     display: "flex",
